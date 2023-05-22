@@ -20,8 +20,8 @@ public class XOButton extends JButton {
 	public int value = 0;
 	
 	public XOButton(int x, int y) {
-		X = new ImageIcon("assets/image/x3.jpg");
-		O = new ImageIcon("assets/image/o3.jpg");
+		X = new ImageIcon("src/IMG/X1.jpg");
+		O = new ImageIcon("src/IMG/O1.jpg");
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setVerticalAlignment(SwingConstants.CENTER);
 		this.setIcon(new ImageIcon("assets/image/blank.jpg"));
