@@ -14,18 +14,16 @@ public class User {
     private String username;
     private String password;
     private String nickname;
-    private String avatar;
     private int numberOfGame;
     private int numberOfwin;
     private int numberOfDraw;
     private int rank;
 
-    public User(int ID, String username, String password, String nickname, String avatar, int numberOfGame, int numberOfwin, int numberOfDraw, int rank) {
+    public User(int ID, String username, String password, String nickname, int numberOfGame, int numberOfwin, int numberOfDraw, int rank) {
         this.ID = ID;
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        this.avatar = avatar;
         this.numberOfGame = numberOfGame;
         this.numberOfwin = numberOfwin;
         this.numberOfDraw = numberOfDraw;
@@ -41,12 +39,11 @@ public class User {
     }
 
 
-    public User(int ID, String username, String password, String nickname, String avatar, int numberOfGame, int numberOfwin, int numberOfDraw) {
+    public User(int ID, String username, String password, String nickname, int numberOfGame, int numberOfwin, int numberOfDraw) {
         this.ID = ID;
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        this.avatar = avatar;
         this.numberOfGame = numberOfGame;
         this.numberOfwin = numberOfwin;
         this.numberOfDraw = numberOfDraw;
@@ -63,11 +60,10 @@ public class User {
         this.password = password;
     }
 
-    public User(String username, String password, String nickname, String avatar) {
+    public User(String username, String password, String nickname) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
-        this.avatar = avatar;
     }
 
     public int getID() {
@@ -84,10 +80,6 @@ public class User {
 
     public String getNickname() {
         return nickname;
-    }
-
-    public String getAvatar() {
-        return avatar;
     }
 
     public int getNumberOfGame() {
@@ -108,10 +100,6 @@ public class User {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 
     public void setNumberOfGame(int numberOfGame) {

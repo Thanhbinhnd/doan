@@ -40,11 +40,9 @@ public class Register extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         txttendangnhap = new javax.swing.JTextField();
         txtmatkhau = new javax.swing.JPasswordField();
         txtnickname = new javax.swing.JTextField();
-        avatarcombobox = new javax.swing.JComboBox<>();
         btndangky = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
@@ -73,21 +71,9 @@ public class Register extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Nickname:");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, -1, -1));
-
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("Avatar;");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, -1, -1));
         getContentPane().add(txttendangnhap, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 160, 190, -1));
         getContentPane().add(txtmatkhau, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 210, 190, -1));
         getContentPane().add(txtnickname, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 260, 190, -1));
-
-        avatarcombobox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                avatarcomboboxActionPerformed(evt);
-            }
-        });
-        getContentPane().add(avatarcombobox, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 120, 80));
 
         btndangky.setText("ĐĂNG KÝ");
         btndangky.addActionListener(new java.awt.event.ActionListener() {
@@ -114,18 +100,11 @@ public class Register extends javax.swing.JFrame {
             String nickName = txtnickname.getText();
             if(nickName.isEmpty())
                 throw new Exception("Vui lòng nhập nickname");
-            int avatar = avatarcombobox.getSelectedIndex();
-            if(avatar==-1){
-                throw new Exception("Vui lòng chọn avatar");
             }
-        } catch (Exception ex) {
+        catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
     }//GEN-LAST:event_btndangkyActionPerformed
-
-    private void avatarcomboboxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_avatarcomboboxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_avatarcomboboxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -165,14 +144,12 @@ public class Register extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> avatarcombobox;
     private javax.swing.JButton btndangky;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPasswordField txtmatkhau;
     private javax.swing.JTextField txtnickname;
     private javax.swing.JTextField txttendangnhap;
