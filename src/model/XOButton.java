@@ -20,11 +20,11 @@ public class XOButton extends JButton {
 	public int value = 0;
 	
 	public XOButton(int x, int y) {
-		X = new ImageIcon("src/IMG/X1.jpg");
-		O = new ImageIcon("src/IMG/O1.jpg");
+		X = new ImageIcon("src/IMG/X1.png");
+		O = new ImageIcon("src/IMG/O1.png");
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setVerticalAlignment(SwingConstants.CENTER);
-		this.setIcon(new ImageIcon("assets/image/blank.jpg"));
+		this.setIcon(new ImageIcon("src/IMG/blank.png"));
 		this.point = new Point(x, y);
                 XOButton _this = this;
 		this.addMouseListener( new MouseListener() {
@@ -44,15 +44,15 @@ public class XOButton extends JButton {
                     public void mouseExited(MouseEvent e) {
                         if(_this.isEnabled()){
                             _this.setBackground(null);
-                            _this.setIcon(new ImageIcon("assets/image/blank.jpg"));
+                            _this.setIcon(new ImageIcon("src/IMG/blank.png"));
                         }
                     }
 
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         if(_this.isEnabled()) {
-                            _this.setBackground(Color.GREEN);
-                            _this.setIcon(new ImageIcon("assets/image/x3.jpg"));
+                            _this.setBackground(Color.ORANGE);
+                            _this.setIcon(new ImageIcon("src/IMG/X1.png"));
                         }
                     }
 
@@ -80,8 +80,8 @@ public class XOButton extends JButton {
         public void resetState(){
             value = 0;
             this.setEnabled(true);
-            this.setIcon(new ImageIcon("assets/image/blank.jpg"));
-            this.setDisabledIcon(new ImageIcon("assets/image/blank.jpg"));
+            this.setIcon(new ImageIcon("src/IMG/blank.png"));
+            this.setDisabledIcon(new ImageIcon("src/IMG/blank.png"));
         }
 	
 	
