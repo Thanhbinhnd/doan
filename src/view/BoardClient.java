@@ -126,12 +126,12 @@ public final class BoardClient extends javax.swing.JFrame {
         plPlayer.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), "Người chơi", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 16))); // NOI18N
 
         lbAvartar2.setBackground(new java.awt.Color(255, 153, 153));
-        lbAvartar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/icons8_sasuke_uchiha_96px.png"))); // NOI18N
-        lbAvartar2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 153), 2));
+        lbAvartar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/2 (1).png"))); // NOI18N
+        lbAvartar2.setBorder(null);
 
         lbAvartar1.setBackground(new java.awt.Color(255, 153, 153));
-        lbAvartar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/icons8_naruto_96px.png"))); // NOI18N
-        lbAvartar1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 153), 2));
+        lbAvartar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/1 (1).png"))); // NOI18N
+        lbAvartar1.setBorder(null);
 
         lbTen1.setText("Bình");
 
@@ -171,8 +171,8 @@ public final class BoardClient extends javax.swing.JFrame {
             .addGroup(plPlayerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbAvartar1, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
-                    .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                    .addComponent(lbAvartar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbTen1)

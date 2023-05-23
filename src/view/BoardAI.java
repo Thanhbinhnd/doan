@@ -8,58 +8,82 @@ package view;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
+import model.Point;
+import model.XOButton;
 
 /**
  *
  * @author admin
  */
 public final class BoardAI extends javax.swing.JFrame {
-    final int COLUMN = 19, ROW = 19;
-    JButton btnOnBoard[][];
-    JButton lastMove = null;
-
+    private final int row =19;
+    private final int col = 19;
+    public XOButton[][] Buttons = new XOButton[col][row];
+    private final ArrayList<Point> availablesPoint = new ArrayList<Point>();
+    private static final int winScore = 100000000;
+    private int gameNumber = 0;
+    private int userWin = 0;
+    private int aIWin = 0;
+    XOButton preButton;
+    
     public BoardAI() {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // board
-        plBoardContainer.setLayout(new GridLayout(ROW, COLUMN));
-        initBoard();
-        
-    }
-    public void initBoard() {
-        plBoardContainer.removeAll();
-        btnOnBoard = new JButton[COLUMN + 2][ROW + 2];
+        this.setTitle("Caro Game");
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setResizable(false);
+        this.getContentPane().setLayout(null);
+        //Set layout dạng lưới cho panel chứa button
+        plBoardContainer.setLayout(new GridLayout(20, 20));
+        //Setup play button
+        for (int i = 0; i < Buttons.length; i++) {
+            for (int j = 0; j < Buttons.length; j++) {
+                Point point = new Point(i, j);
+                Buttons[i][j] = new XOButton(i, j);
+                Buttons[i][j].addMouseListener( new MouseListener() {
 
-        for (int row = 0; row < ROW; row++) {
-            for (int column = 0; column < COLUMN; column++) {
-                btnOnBoard[row][column] = createBoardButton(row, column);
-                plBoardContainer.add(btnOnBoard[row][column]);
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        // TODO Auto-generated method stub
+                        handleClickButton(point);
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        
+                    }
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+                plBoardContainer.add(Buttons[i][j]);//them ban co vào panel
+                availablesPoint.add(point);
             }
         }
-    }
-    public void setLastMove(int row, int column) {
-        lastMove = btnOnBoard[row][column];
-    }
-    public void addPoint(int row, int column, String email) {
-        if (lastMove != null) {
-            lastMove.setBackground(new Color(180, 180, 180));
-        }
-
-        lastMove = btnOnBoard[row][column];
-        lastMove.setBackground(Color.yellow);
-    }
-    public JButton createBoardButton(int row, int column) {
-        JButton b = new JButton();
-        b.setFocusPainted(false);
-        b.setBackground(new Color(180, 180, 180));
-        b.setActionCommand("");
-            // test
-            // addPoint(row, column, "");
-        return b;
+        preButton=null;
     }
 
     /**
@@ -88,6 +112,7 @@ public final class BoardAI extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
+        jTextArea1 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Game Caro");
@@ -125,11 +150,11 @@ public final class BoardAI extends javax.swing.JFrame {
         plPlayer.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), "Người chơi", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 16))); // NOI18N
 
         lbAvartar2.setBackground(new java.awt.Color(255, 153, 153));
-        lbAvartar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/icons8_transformer_96px.png"))); // NOI18N
+        lbAvartar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/3 (1).png"))); // NOI18N
         lbAvartar2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 153), 2));
 
         lbAvartar1.setBackground(new java.awt.Color(255, 153, 153));
-        lbAvartar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/icons8_naruto_96px.png"))); // NOI18N
+        lbAvartar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/1 (1).png"))); // NOI18N
         lbAvartar1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 153), 2));
 
         lbTen1.setText("Bình");
@@ -198,20 +223,26 @@ public final class BoardAI extends javax.swing.JFrame {
 
         jButton4.setText("Thoát");
 
+        jTextArea1.setText(" ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jbUndo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(22, 22, 22)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextArea1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jbUndo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(22, 22, 22)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,7 +255,8 @@ public final class BoardAI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addComponent(jTextArea1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -262,6 +294,549 @@ public final class BoardAI extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
+ private void handleClickButton(Point point) {
+
+        // TODO: CALC LOGIC HERE
+        point.log();
+        Buttons[point.x][point.y].setState(true);
+        Buttons[point.x][point.y].setEnabled(false);
+        if (getScore(getMatrixBoard(), true, false) >= winScore) {
+            JOptionPane.showMessageDialog(null, "Bạn đã thắng");
+            userWin++;
+            displayUserWin();
+            newGame();
+            return;
+        }
+
+        int nextMoveX = 0, nextMoveY = 0;
+        int[] bestMove = calcNextMove(3);
+
+        if (bestMove != null) {
+            nextMoveX = bestMove[0];
+            nextMoveY = bestMove[1];
+        }
+        Buttons[nextMoveX][nextMoveY].setState(false);
+        Buttons[nextMoveX][nextMoveY].setEnabled(false);
+        if (getScore(getMatrixBoard(), false, true) >= winScore) {
+            JOptionPane.showMessageDialog(null, "Bạn đã thua");
+            aIWin++;
+            displayAIWin();
+            newGame();
+        }
+    }
+
+    private void newGame(){
+        for(int i = 0; i < Buttons.length; i++) {
+            for (int j = 0; j < Buttons.length; j++) {
+                Buttons[i][j].resetState();
+            }
+        }
+        
+        gameNumber++;
+        if (gameNumber % 2 == 0) {
+            JOptionPane.showMessageDialog(rootPane, "Máy đi trước", "Ván mới",JOptionPane.INFORMATION_MESSAGE);
+            Buttons[9][9].setState(false);
+            Buttons[9][9].setEnabled(false);
+
+            if (getScore(getMatrixBoard(), false, true) >= winScore) {
+                JOptionPane.showMessageDialog(null, "Bạn đã thua");
+                newGame();
+            }
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "Bạn đi trước", "Ván mới",JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
+    private void displayUserWin(){
+        String tmp = jTextArea1.getText();
+        tmp+="--Bạn đã thắng";
+        jTextArea1.setText(tmp);
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+    }
+    private void displayAIWin(){
+        String tmp = jTextArea1.getText();
+        tmp+="--Máy thắng";
+        jTextArea1.setText(tmp);
+        jTextArea1.setCaretPosition(jTextArea1.getDocument().getLength());
+    }
+    
+
+    public int[] calcNextMove(int depth) {
+        int[][] board = getMatrixBoard();
+        Object[] bestMove = searchWinningMove(board);
+        Object[] badMove = searchLoseMove(board);
+
+        int[] move = new int[2];
+
+        if (badMove[1] != null && badMove[2] != null) {
+
+            move[0] = (Integer) (badMove[1]);
+            move[1] = (Integer) (badMove[2]);
+            return move;
+        }
+
+        if (bestMove[1] != null && bestMove[2] != null) {
+
+            move[0] = (Integer) (bestMove[1]);
+            move[1] = (Integer) (bestMove[2]);
+
+        } else {
+
+            bestMove = minimaxSearchAB(depth, board, true, -1.0, winScore);
+            if (bestMove[1] == null) {
+                move = null;
+            } else {
+                move[0] = (Integer) (bestMove[1]);
+                move[1] = (Integer) (bestMove[2]);
+            }
+        }
+        return move;
+    }
+
+    public int[][] playNextMove(int[][] board, int[] move, boolean isUserTurn) {
+        int i = move[0], j = move[1];
+        int[][] newBoard = new int[row][col];
+        for (int h = 0; h < row; h++) {
+            for (int k = 0; k < col; k++) {
+                newBoard[h][k] = board[h][k];
+            }
+        }
+        newBoard[i][j] = isUserTurn ? 2 : 1;
+        return newBoard;
+    }
+
+    private Object[] searchWinningMove(int[][] matrix) {
+        ArrayList<int[]> allPossibleMoves = generateMoves(matrix);
+        System.out.println(allPossibleMoves.size());
+
+        Object[] winningMove = new Object[3];
+
+        for (int[] move : allPossibleMoves) {
+            int[][] dummyBoard = playNextMove(matrix, move, false);
+
+            // If the white player has a winning score in that temporary board, return the move.
+            if (getScore(dummyBoard, false, false) >= winScore) {
+                winningMove[1] = move[0];
+                winningMove[2] = move[1];
+                return winningMove;
+            }
+        }
+
+        return winningMove;
+    }
+
+    private Object[] searchLoseMove(int[][] matrix) {
+        ArrayList<int[]> allPossibleMoves = generateMoves(matrix);
+        System.out.println(allPossibleMoves.size());
+
+        Object[] losingMove = new Object[3];
+
+        for (int[] move : allPossibleMoves) {
+            int[][] dummyBoard = playNextMove(matrix, move, true);
+
+            // If the white player has a winning score in that temporary board, return the move.
+            if (getScore(dummyBoard, true, false) >= winScore) {
+                losingMove[1] = move[0];
+                losingMove[2] = move[1];
+                return losingMove;
+            }
+        }
+
+        return losingMove;
+    }
+
+    public Object[] minimaxSearchAB(int depth, int[][] board, boolean max, double alpha, double beta) {
+        if (depth == 0) {
+            Object[] x = {evaluateBoardForWhite(board, !max), null, null};
+            return x;
+        }
+
+        ArrayList<int[]> allPossibleMoves = generateMoves(board);
+
+        if (allPossibleMoves.size() == 0) {
+
+            Object[] x = {evaluateBoardForWhite(board, !max), null, null};
+
+            return x;
+        }
+
+        Object[] bestMove = new Object[3];
+
+        if (max) {
+            bestMove[0] = -1.0;
+
+            for (int[] move : allPossibleMoves) {
+                // Chơi thử với move hiện tại
+                int[][] dummyBoard = playNextMove(board, move, false);
+
+                Object[] tempMove = minimaxSearchAB(depth - 1, dummyBoard, !max, alpha, beta);
+
+                // Cập nhật alpha
+                if ((Double) (tempMove[0]) > alpha) {
+                    alpha = (Double) (tempMove[0]);
+                }
+                // Cắt tỉa beta
+                if ((Double) (tempMove[0]) >= beta) {
+                    return tempMove;
+                }
+                if ((Double) tempMove[0] > (Double) bestMove[0]) {
+                    bestMove = tempMove;
+                    bestMove[1] = move[0];
+                    bestMove[2] = move[1];
+                }
+            }
+
+        } else {
+            bestMove[0] = 100000000.0;
+            bestMove[1] = allPossibleMoves.get(0)[0];
+            bestMove[2] = allPossibleMoves.get(0)[1];
+            for (int[] move : allPossibleMoves) {
+                int[][] dummyBoard = playNextMove(board, move, true);
+
+                Object[] tempMove = minimaxSearchAB(depth - 1, dummyBoard, !max, alpha, beta);
+
+                // Cập nhật beta
+                if (((Double) tempMove[0]) < beta) {
+                    beta = (Double) (tempMove[0]);
+                }
+                // Cắt tỉa alpha
+                if ((Double) (tempMove[0]) <= alpha) {
+                    return tempMove;
+                }
+                if ((Double) tempMove[0] < (Double) bestMove[0]) {
+                    bestMove = tempMove;
+                    bestMove[1] = move[0];
+                    bestMove[2] = move[1];
+                }
+            }
+        }
+        return bestMove;
+    }
+
+    public double evaluateBoardForWhite(int[][] board, boolean userTurn) {
+
+        double blackScore = getScore(board, true, userTurn);
+        double whiteScore = getScore(board, false, userTurn);
+
+        if (blackScore == 0) {
+            blackScore = 1.0;
+        }
+
+        return whiteScore / blackScore;
+
+    }
+
+    public ArrayList<int[]> generateMoves(int[][] boardMatrix) {
+        ArrayList<int[]> moveList = new ArrayList<int[]>();
+
+        int boardSize = boardMatrix.length;
+
+        // Tìm những tất cả những ô trống nhưng có đánh XO liền kề
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+
+                if (boardMatrix[i][j] > 0) {
+                    continue;
+                }
+
+                if (i > 0) {
+                    if (j > 0) {
+                        if (boardMatrix[i - 1][j - 1] > 0
+                                || boardMatrix[i][j - 1] > 0) {
+                            int[] move = {i, j};
+                            moveList.add(move);
+                            continue;
+                        }
+                    }
+                    if (j < boardSize - 1) {
+                        if (boardMatrix[i - 1][j + 1] > 0
+                                || boardMatrix[i][j + 1] > 0) {
+                            int[] move = {i, j};
+                            moveList.add(move);
+                            continue;
+                        }
+                    }
+                    if (boardMatrix[i - 1][j] > 0) {
+                        int[] move = {i, j};
+                        moveList.add(move);
+                        continue;
+                    }
+                }
+                if (i < boardSize - 1) {
+                    if (j > 0) {
+                        if (boardMatrix[i + 1][j - 1] > 0
+                                || boardMatrix[i][j - 1] > 0) {
+                            int[] move = {i, j};
+                            moveList.add(move);
+                            continue;
+                        }
+                    }
+                    if (j < boardSize - 1) {
+                        if (boardMatrix[i + 1][j + 1] > 0
+                                || boardMatrix[i][j + 1] > 0) {
+                            int[] move = {i, j};
+                            moveList.add(move);
+                            continue;
+                        }
+                    }
+                    if (boardMatrix[i + 1][j] > 0) {
+                        int[] move = {i, j};
+                        moveList.add(move);
+                        continue;
+                    }
+                }
+
+            }
+        }
+        return moveList;
+
+    }
+
+    // Đánh giá bàn cờ dựa trên tổng số điểm hàng ngan, hàng dọc, và 2 đường chéo
+    public int getScore(int[][] board, boolean forX, boolean blacksTurn) {
+
+        return evaluateHorizontal(board, forX, blacksTurn)
+                + evaluateVertical(board, forX, blacksTurn)
+                + evaluateDiagonal(board, forX, blacksTurn);
+    }
+
+    public static int evaluateHorizontal(int[][] boardMatrix, boolean forX, boolean playersTurn) {
+
+        int consecutive = 0;
+        int blocks = 2;
+        int score = 0;
+
+        for (int i = 0; i < boardMatrix.length; i++) {
+            for (int j = 0; j < boardMatrix[0].length; j++) {
+
+                if (boardMatrix[i][j] == (forX ? 2 : 1)) {
+                    //2. Đếm...
+                    consecutive++;
+                } // gặp ô trống
+                else if (boardMatrix[i][j] == 0) {
+                    if (consecutive > 0) {
+                        // Ra: Ô trống ở cuối sau khi đếm. Giảm block rồi bắt đầu tính điểm sau đó reset lại ban đầu
+                        blocks--;
+                        score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                        consecutive = 0;
+                        blocks = 1;
+                    } else {
+                        // 1. Vào reset lại blocks = 1 rồi bắt đầu đếm
+                        blocks = 1;
+                    }
+                } //gặp quân địch
+                else if (consecutive > 0) {
+                    // 2.Ra:  Ô bị chặn sau khi đếm. Tính điểm sau đó reset lại.
+                    score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                    consecutive = 0;
+                    blocks = 2;
+                } else {
+                    //1. Vào: reset lại blocks = 2 rồi bắt đầu đếm
+                    blocks = 2;
+                }
+            }
+
+            // 3. Ra: nhưng lúc này đang ở cuối. Nếu liên tục thì vẫn tính cho đến hết dòng
+            if (consecutive > 0) {
+                score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+
+            }
+            // reset lại để tiếp tục chạy cho dòng tiếp theo
+            consecutive = 0;
+            blocks = 2;
+
+        }
+        return score;
+    }
+    // hàm tính toán đường dọc tương tự như đường ngan
+
+    public static int evaluateVertical(int[][] boardMatrix, boolean forX, boolean playersTurn) {
+
+        int consecutive = 0;
+        int blocks = 2;
+        int score = 0;
+
+        for (int j = 0; j < boardMatrix[0].length; j++) {
+            for (int i = 0; i < boardMatrix.length; i++) {
+                if (boardMatrix[i][j] == (forX ? 2 : 1)) {
+                    consecutive++;
+                } else if (boardMatrix[i][j] == 0) {
+                    if (consecutive > 0) {
+                        blocks--;
+                        score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                        consecutive = 0;
+                        blocks = 1;
+                    } else {
+                        blocks = 1;
+                    }
+                } else if (consecutive > 0) {
+                    score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                    consecutive = 0;
+                    blocks = 2;
+                } else {
+                    blocks = 2;
+                }
+            }
+            if (consecutive > 0) {
+                score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+
+            }
+            consecutive = 0;
+            blocks = 2;
+
+        }
+        return score;
+    }
+    // Hàm tính toán 2 đường chéo tương tự như hàng ngan
+
+    public static int evaluateDiagonal(int[][] boardMatrix, boolean forX, boolean playersTurn) {
+
+        int consecutive = 0;
+        int blocks = 2;
+        int score = 0;
+        // Đường chéo /
+        for (int k = 0; k <= 2 * (boardMatrix.length - 1); k++) {
+            int iStart = Math.max(0, k - boardMatrix.length + 1);
+            int iEnd = Math.min(boardMatrix.length - 1, k);
+            for (int i = iStart; i <= iEnd; ++i) {
+                int j = k - i;
+
+                if (boardMatrix[i][j] == (forX ? 2 : 1)) {
+                    consecutive++;
+                } else if (boardMatrix[i][j] == 0) {
+                    if (consecutive > 0) {
+                        blocks--;
+                        score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                        consecutive = 0;
+                        blocks = 1;
+                    } else {
+                        blocks = 1;
+                    }
+                } else if (consecutive > 0) {
+                    score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                    consecutive = 0;
+                    blocks = 2;
+                } else {
+                    blocks = 2;
+                }
+
+            }
+            if (consecutive > 0) {
+                score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+
+            }
+            consecutive = 0;
+            blocks = 2;
+        }
+        // Đường chéo \
+        for (int k = 1 - boardMatrix.length; k < boardMatrix.length; k++) {
+            int iStart = Math.max(0, k);
+            int iEnd = Math.min(boardMatrix.length + k - 1, boardMatrix.length - 1);
+            for (int i = iStart; i <= iEnd; ++i) {
+                int j = i - k;
+
+                if (boardMatrix[i][j] == (forX ? 2 : 1)) {
+                    consecutive++;
+                } else if (boardMatrix[i][j] == 0) {
+                    if (consecutive > 0) {
+                        blocks--;
+                        score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                        consecutive = 0;
+                        blocks = 1;
+                    } else {
+                        blocks = 1;
+                    }
+                } else if (consecutive > 0) {
+                    score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+                    consecutive = 0;
+                    blocks = 2;
+                } else {
+                    blocks = 2;
+                }
+
+            }
+            if (consecutive > 0) {
+                score += getConsecutiveSetScore(consecutive, blocks, forX == playersTurn);
+
+            }
+            consecutive = 0;
+            blocks = 2;
+        }
+        return score;
+    }
+
+    public static int getConsecutiveSetScore(int count, int blocks, boolean currentTurn) {
+        final int winGuarantee = 1000000;
+        if (blocks == 2 && count <= 5) {
+            return 0;
+        }
+        switch (count) {
+            // Ăn 5 -> Cho điểm cao nhất
+            case 5: {
+                return winScore;
+            }
+            case 4: {
+                // Đang 4 -> Tuỳ theo lược và bị chặn: winGuarantee, winGuarantee/4, 200
+                if (currentTurn) {
+                    return winGuarantee;
+                } else {
+                    if (blocks == 0) {
+                        return winGuarantee / 4;
+                    } else {
+                        return 200;
+                    }
+                }
+            }
+            case 3: {
+                // Đang 3: Block = 0
+                if (blocks == 0) {
+                    // Nếu lược của currentTurn thì ăn 3 + 1 = 4 (không bị block) -> 50000 -> Khả năng thắng cao. 
+                    // Ngược lại không phải lược của currentTurn thì khả năng bị blocks cao
+                    if (currentTurn) {
+                        return 50000;
+                    } else {
+                        return 200;
+                    }
+                } else {
+                    // Block == 1 hoặc Blocks == 2
+                    if (currentTurn) {
+                        return 10;
+                    } else {
+                        return 5;
+                    }
+                }
+            }
+            case 2: {
+                // Tương tự với 2
+                if (blocks == 0) {
+                    if (currentTurn) {
+                        return 7;
+                    } else {
+                        return 5;
+                    }
+                } else {
+                    return 3;
+                }
+            }
+            case 1: {
+                return 1;
+            }
+        }
+        return winScore * 2;
+    }
+
+    public int[][] getMatrixBoard() {
+        int matrix[][] = new int[row][col];
+        for (int i = 0; i < Buttons.length; i++) {
+            for (int j = 0; j < Buttons.length; j++) {
+                int value = Buttons[i][j].value;
+                matrix[i][j] = value;
+            }
+        }
+
+        return matrix;
+    }
 
     /**
      * @param args the command line arguments
@@ -289,69 +864,6 @@ public final class BoardAI extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(BoardAI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -369,6 +881,7 @@ public final class BoardAI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JTextField jTextArea1;
     private javax.swing.JButton jbUndo;
     private javax.swing.JLabel koten;
     private javax.swing.JLabel lbAvartar1;
