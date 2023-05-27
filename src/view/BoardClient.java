@@ -101,7 +101,94 @@ public final class BoardClient extends javax.swing.JFrame {
     
     
     return b;
-   }
+}
+    
+    public boolean checkWin(int row, int column) {
+        int player = currentPlayer == 1 ? 2 : 1;
+        int count = 1;
+
+
+        // Kiểm tra hàng ngang
+        for (int i = column - 1; i >= 0; i--) {
+            if (btnOnBoard[row][i].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        for (int i = column + 1; i < COLUMN; i++) {
+            if (btnOnBoard[row][i].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        if (count >= 5) {
+            return true;
+        }
+
+        // Kiểm tra hàng dọc
+        count = 1;
+        for (int i = row - 1; i >= 0; i--){
+            if (btnOnBoard[i][column].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        for (int i = row + 1; i < ROW; i++) {
+            if (btnOnBoard[i][column].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+           } else {
+                break;
+            }
+        }
+        if (count >= 5) {
+            return true;
+        }
+
+        // Kiểm tra đường chéo
+        count = 1;
+        for (int i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
+            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        for (int i = row + 1, j = column + 1; i < ROW && j < COLUMN; i++, j++) {
+            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        if (count >= 5) {
+            return true;
+        }
+
+        // Kiểm tra đường chéo ngược lại
+        count = 1;
+        for (int i = row - 1, j = column+ 1; i >= 0 && j < COLUMN; i--, j++) {
+            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        for (int i = row + 1, j = column - 1; i < ROW && j >= 0; i++, j--) {
+            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
+                count++;
+            } else {
+                break;
+            }
+        }
+        if (count >= 5) {
+            return true;
+        }
+
+        return false;
+} 
 
    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -243,6 +330,7 @@ public final class BoardClient extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new BoardClient().setVisible(true);
+            
             }
         });
     }
