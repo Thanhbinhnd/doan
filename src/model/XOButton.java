@@ -83,6 +83,14 @@ public class XOButton extends JButton {
             this.setIcon(new ImageIcon("src/IMG/blank.png"));
             this.setDisabledIcon(new ImageIcon("src/IMG/blank.png"));
         }
+
+    public boolean getStatus() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setStatus(Object currentPlayer) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 	
 	
 }
