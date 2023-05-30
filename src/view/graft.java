@@ -123,10 +123,10 @@ public class graft extends javax.swing.JFrame {
         }
 
         // Lưu thông tin người chơi vào biến static trong lớp BoardClient
-        BoardClient.idNguoiChoi1 = Integer.parseInt(id1);
-        BoardClient.idNguoiChoi2 = Integer.parseInt(id2);
-        BoardClient.tenNguoiChoi1 = tenNguoiChoi1;
-         BoardClient.tenNguoiChoi2 = tenNguoiChoi2;
+        BoardClient1.idNguoiChoi1 = Integer.parseInt(id1);
+        BoardClient1.idNguoiChoi2 = Integer.parseInt(id2);
+        BoardClient1.tenNguoiChoi1 = tenNguoiChoi1;
+        BoardClient1.tenNguoiChoi2 = tenNguoiChoi2;
 
         // Hiển thị JFrame BoardClient
       BoardClient  BoardClient = new BoardClient();
@@ -140,7 +140,9 @@ public class graft extends javax.swing.JFrame {
     }//GEN-LAST:event_txtbatdauActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    
+      Home homeFrame = new Home(); // tạo một đối tượng JFrame mới
+      homeFrame.setVisible(true); // hiển thị JFrame mới
+      this.dispose();     
     }//GEN-LAST:event_jButton2ActionPerformed
 
     public static void main(String args[]) {

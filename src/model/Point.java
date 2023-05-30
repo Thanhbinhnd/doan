@@ -53,5 +53,13 @@ public class Point {
 	public void log() {
 		System.out.println("x: "+ this.x + "| y: " + this.y);
 	}
+
+    public int getX() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public int getY() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
 

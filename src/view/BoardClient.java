@@ -19,7 +19,7 @@ public final class BoardClient extends javax.swing.JFrame {
     final int COLUMN = 19, ROW = 19;
     JButton btnOnBoard[][];
     JButton lastMove = null;
-
+    int[][] boardState = new int[ROW][COLUMN];
     public BoardClient() {
         initComponents();
         int[][] boardState = new int[ROW][COLUMN];
@@ -102,93 +102,108 @@ public final class BoardClient extends javax.swing.JFrame {
     
     return b;
 }
+  public void handleClickButton(int row, int column) {
+  if (!btnOnBoard[row][column].getActionCommand().equals("")) {
+     return; 
+  }
+  
+  if (currentPlayer == 1) {
+     boardState[row][column] = 1; 
+  } else {
+     boardState[row][column] = 2;    
+  }
+  
+  // Cập nhật giao diện.....
     
+  boolean won = checkWin(row, column);
+  if (won) {
+     // Hiển thị người thắng ... 
+  }
+}
     public boolean checkWin(int row, int column) {
-        int player = currentPlayer == 1 ? 2 : 1;
-        int count = 1;
+    int count = 1;
+    int player = boardState[row][column];
+    // Kiểm tra hàng ngang
+    for (int i = column - 1; i >= 0; i--) {
+        if (btnOnBoard[row + 1][i + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    for (int i = column + 1; i < COLUMN + 2; i++) {
+        if (btnOnBoard[row + 1][i + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    if (count >= 5) {
+        return true;
+    }
 
+    // Kiểm tra hàng dọc
+    count = 1;
+    for (int i = row - 1; i >= 0; i--) {
+        if (btnOnBoard[i + 1][column + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    for (int i = row + 1; i < ROW + 2; i++) {
+        if (btnOnBoard[i + 1][column + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    if (count >= 5) {
+        return true;
+    }
 
-        // Kiểm tra hàng ngang
-        for (int i = column - 1; i >= 0; i--) {
-            if (btnOnBoard[row][i].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
+    // Kiểm tra đường chéo chính (\)
+    count = 1;
+    for (int i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
+        if (btnOnBoard[i + 1][j + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
         }
-        for (int i = column + 1; i < COLUMN; i++) {
-            if (btnOnBoard[row][i].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
+    }
+    for (int i = row + 1, j = column + 1; i < ROW + 2 && j < COLUMN + 2; i++, j++) {
+       if (btnOnBoard[i + 1][j + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
         }
-        if (count >= 5) {
-            return true;
-        }
+    }
+    if (count >= 5) {
+        return true;
+    }
 
-        // Kiểm tra hàng dọc
-        count = 1;
-        for (int i = row - 1; i >= 0; i--){
-            if (btnOnBoard[i][column].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
+    // Kiểm tra đường chéo phụ (/)
+    count = 1;
+    for (int i = row - 1, j = column + 1; i >= 0 && j < COLUMN + 2; i--, j++) {
+        if (btnOnBoard[i + 1][j + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
         }
-        for (int i = row + 1; i < ROW; i++) {
-            if (btnOnBoard[i][column].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-           } else {
-                break;
-            }
+    }
+    for (int i = row + 1, j = column - 1; i < ROW + 2 && j >= 0; i++, j--) {
+        if (btnOnBoard[i + 1][j + 1].getActionCommand().equals(Integer.toString(player))) {
+            count++;
+        } else {
+            break;
         }
-        if (count >= 5) {
-            return true;
-        }
+    }
+    if (count >= 5) {
+        return true;
+    }
 
-        // Kiểm tra đường chéo
-        count = 1;
-        for (int i = row - 1, j = column - 1; i >= 0 && j >= 0; i--, j--) {
-            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        for (int i = row + 1, j = column + 1; i < ROW && j < COLUMN; i++, j++) {
-            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        if (count >= 5) {
-            return true;
-        }
-
-        // Kiểm tra đường chéo ngược lại
-        count = 1;
-        for (int i = row - 1, j = column+ 1; i >= 0 && j < COLUMN; i--, j++) {
-            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        for (int i = row + 1, j = column - 1; i < ROW && j >= 0; i++, j--) {
-            if (btnOnBoard[i][j].getActionCommand().equals(Integer.toString(player))) {
-                count++;
-            } else {
-                break;
-            }
-        }
-        if (count >= 5) {
-            return true;
-        }
-
-        return false;
-} 
+    return false;
+}
 
    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -229,7 +244,7 @@ public final class BoardClient extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plPlayerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lbAvartar1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbAvartar2)
                 .addContainerGap())
             .addGroup(plPlayerLayout.createSequentialGroup()
@@ -244,13 +259,13 @@ public final class BoardClient extends javax.swing.JFrame {
             .addGroup(plPlayerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                    .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lbAvartar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbTen1)
                     .addComponent(lbTen2))
-                .addGap(57, 57, 57))
+                .addGap(42, 42, 42))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Chức năng", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 16))); // NOI18N
@@ -277,18 +292,18 @@ public final class BoardClient extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
-                .addContainerGap(85, Short.MAX_VALUE))
+                .addContainerGap(62, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout plBoardContainerLayout = new javax.swing.GroupLayout(plBoardContainer);
         plBoardContainer.setLayout(plBoardContainerLayout);
         plBoardContainerLayout.setHorizontalGroup(
             plBoardContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 563, Short.MAX_VALUE)
+            .addGap(0, 653, Short.MAX_VALUE)
         );
         plBoardContainerLayout.setVerticalGroup(
             plBoardContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 482, Short.MAX_VALUE)
+            .addGap(0, 515, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -298,7 +313,7 @@ public final class BoardClient extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(plBoardContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(plPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -308,14 +323,14 @@ public final class BoardClient extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(plBoardContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 14, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(plPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addComponent(plPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(plBoardContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
         );
 
         pack();
