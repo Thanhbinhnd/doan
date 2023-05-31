@@ -20,10 +20,11 @@ public class client {
     }
     public enum View{
         Login,
-        
         Home,
         BoardAI,
-        BoardClient
+        BoardClient,
+        rea
+        
     }
     //giao dien
   

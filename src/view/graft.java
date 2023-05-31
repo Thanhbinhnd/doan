@@ -129,9 +129,10 @@ public class graft extends javax.swing.JFrame {
         BoardClient1.tenNguoiChoi2 = tenNguoiChoi2;
 
         // Hiển thị JFrame BoardClient
-      BoardClient  BoardClient = new BoardClient();
-        BoardClient.setVisible(true);
-        dispose(); // Đóng JFrame Register
+     BoardClient1 BoardClient1= new  BoardClient1();
+     BoardClient1.setVisible(true);
+     this.setVisible(false);
+    // Đóng JFrame Register
     } catch (SQLException e) {
         e.printStackTrace();
     }
