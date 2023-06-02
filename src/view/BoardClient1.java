@@ -1,11 +1,6 @@
 package view;
 
-
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+import com.sun.jdi.connect.spi.Connection;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,31 +10,37 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
-/**
- *
- * @author admin
- */
-public final class BoardClient1 extends javax.swing.JFrame {
-    static String tenNguoiChoi1;
+public class BoardClient1 extends javax.swing.JFrame {
+
     static Integer idNguoiChoi1;
     static Integer idNguoiChoi2;
-    static String tenNguoiChoi2;
     final int n = 19, m = 19;
     JButton[][] btn;
     JButton lastMove = null;
     public int diem = 0;
+    public int currentPlayer = 1; // add a variable to keep track of the current player
 
     public BoardClient1() {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // board
+// board
         plBoardContainer.setLayout(new GridLayout(m, n));
         plBoardContainer.setPreferredSize(new Dimension(826, 826));
-       
         initBoard();
-
+        String[] options = {"Người chơi 1", "Người chơi 2"};
+        int result = JOptionPane.showOptionDialog(this, "Chọn người chơi đi trước", "Bắt đầu trận đấu", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+        if (result == JOptionPane.YES_OPTION) {
+            currentPlayer = 1;
+            JOptionPane.showMessageDialog(null, "Người chơi 1 đi trước");
+        } else {
+            currentPlayer = 2;
+            JOptionPane.showMessageDialog(null, "Người chơi 2 đi trước");
+        }
     }
 
     public void initBoard() {
@@ -50,122 +51,209 @@ public final class BoardClient1 extends javax.swing.JFrame {
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setResizable(false);
         btn = new JButton[n + 2][m + 2];
-
         for (int row = 0; row < m; row++) {
             for (int column = 0; column < n; column++) {
                 btn[row][column] = createBoardButton(row, column);
-                btn[row][column].addActionListener(new ActionListener(){
-                      public void actionPerformed(ActionEvent e) {
-        /**/
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                if (e.getSource() == btn[i][j] && !"X".equals(btn[i][j].getText()) && !"O".equals(btn[i][j].getText())) {
-                    if (diem % 2 == 0) {
-                        btn[i][j].setText("X");
-                        btn[i][j].setForeground(Color.RED);
-                        diem++;
-                        if (win(i, j, btn[i][j].getText())) {
-                            btn[i][j].setBackground(Color.red);
-                            JOptionPane.showMessageDialog(null, "X win!", "Game Over!", JOptionPane.INFORMATION_MESSAGE);
-                            for (int i1 = 0; i1 < n; i1++) {
-                                for (int j1 = 0; j1 < m; j1++) {
-                                    btn[i1][j1].setText("");
-                                    btn[i1][j1].setBackground(Color.white);
-                                }
-                            }
-                        }
-                    } else {
-                        btn[i][j].setText("O");
-                        btn[i][j].setForeground(Color.BLACK);
-                        diem++;
-                        if (win(i, j, btn[i][j].getText())) {
-                            btn[i][j].setBackground(Color.green);
-                            JOptionPane.showMessageDialog(null, "O win!", "Game Over!", JOptionPane.INFORMATION_MESSAGE);
-                            JOptionPane.showMessageDialog(null, "Trò Chơi Mới", "Thoát", JOptionPane.INFORMATION_MESSAGE);
-                            for (int i1 = 0; i1 < n; i1++) {
-                                for (int j1 = 0; j1 < m; j1++) {
-                                    btn[i1][j1].setText("");
-                                    btn[i1][j1].setBackground(Color.white);
+                btn[row][column].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        for (int i = 0; i < n; i++) {
+                            for (int j = 0; j < m; j++) {
+                                if (e.getSource() == btn[i][j] && !"X".equals(btn[i][j].getText()) && !"O".equals(btn[i][j].getText())) {
+                                    if (currentPlayer == 1) {
+                                        btn[i][j].setText("X");
+                                        btn[i][j].setForeground(Color.RED);
+                                        diem++;
+                                        if (win(i, j, btn[i][j].getText())) {
+                                            btn[i][j].setBackground(Color.red);
+                                            JOptionPane.showMessageDialog(null, "Người chơi 1 thắng!", "Game Over!", JOptionPane.INFORMATION_MESSAGE);
+                                            if (currentPlayer == 1) {
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so + 20, so_tran_thang = so_tran_thang + 1 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi1);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so - 10 WHERE id = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi2);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                            } else {
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so + 20, so_tran_thang = so_tran_thang + 1 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi2);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so - 10 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi1);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                            }
+                                            for (int i1 = 0; i1 < n; i1++) {
+                                                for (int j1 = 0; j1 < m; j1++) {
+                                                    btn[i1][j1].setText("");
+                                                    btn[i1][j1].setBackground(Color.white);
+                                                }
+                                            }
+                                        }
+                                        currentPlayer = 2; // switch to player 2 after player 1 makes a move
+                                    } else {
+                                        btn[i][j].setText("O");
+                                        btn[i][j].setForeground(Color.BLUE);
+                                        diem++;
+                                        if (win(i, j, btn[i][j].getText())) {
+                                            btn[i][j].setBackground(Color.green);
+                                            JOptionPane.showMessageDialog(null, "Người chơi 2 thắng!", "Game Over!", JOptionPane.INFORMATION_MESSAGE);
+                                            JOptionPane.showMessageDialog(null, "Trò Chơi Mới", "Thoát", JOptionPane.INFORMATION_MESSAGE);
+                                              if (currentPlayer == 1) {
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so + 20, so_tran_thang = so_tran_thang + 1 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi1);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so - 10 WHERE id = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi2);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                            } else {
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so + 20, so_tran_thang = so_tran_thang + 1 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi2);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }
+                                                try {
+                                                    java.sql.Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/doangame", "root", "");
+                                                    String updateQuery = "UPDATE nguoi_choi SET diem_so = diem_so - 10 WHERE ID = ?";
+                                                    PreparedStatement pstmt = conn.prepareStatement(updateQuery);
+                                                    pstmt.setInt(1, idNguoiChoi1);
+                                                    pstmt.executeUpdate();
+                                                    pstmt.close();
+                                                    conn.close();
+                                                } catch (SQLException ex) {
+                                                    ex.printStackTrace();
+                                                }}
+                                            for (int i1 = 0; i1 < n; i1++) {
+                                                for (int j1 = 0; j1 < m; j1++) {
+                                                    btn[i1][j1].setText("");
+                                                    btn[i1][j1].setBackground(Color.white);
+                                                }
+                                            }
+                                        }
+                                        currentPlayer = 1; // switch to player 1 after player 2 makes a move
+                                    }
                                 }
                             }
                         }
                     }
-//                JOptionPane.showMessageDialog(this, i + " " + j);
-                }
 
-            }
-        }
-    }
-
-    //kiem tra thang 
-    public boolean win(int x, int y, String name) {
-        int k, j;
-        int d = 0;
-        // kt chieu doc
-        for (k = -4; k <= 4; k++) {
-            if (x + k >= 0 && x + k < n) {
-                if (btn[x + k][y].getText() == name) {
-                    d++;
-                } else if (d < 5) {
-                    d = 0;
-                }
-            }
-        }
-        if (d >= 5) {
-            return true;
-        } else {
-            d = 0;
-        }
-        //xet ngang
-        for (k = -5; k <= 5; k++) {
-            if (y + k >= 0 && y + k < n) {
-                if (btn[x][y + k].getText() == name) {
-                    d++;
-                } else if (d < 5) {
-                    d = 0;
-                }
-            }
-        }
-        if (d >= 5) {
-            return true;
-        } else {
-            d = 0;
-        }
-        //cheo
-        for (k = -4, j = 4; k <= 4 && j >= -4; k++, j--) {
-            if (y + k >= 0 && y + k < n && x + j >= 0 && x + j < m) {
-                if (btn[x + j][y + k].getText() == name) {
-                    d++;
-                } else if (d < 5) {
-                    d = 0;
-                }
-            }
-        }
-        if (d >= 5) {
-            return true;
-        } else {
-            d = 0;
-        }
-        for (k = -4; k <= 4; k++) {
-            if (y + k >= 0 && y + k < n && x + k >= 0 && x + k < m) {
-                if (btn[x + k][y + k].getText() == name) {
-                    d++;
-                } else if (d < 5) {
-                    d = 0;
-                }
-            }
-        }
-        if (d >= 5) {
-            return true;
-        }
-        return false;
-    }
-
-                
-     });
+                    //kiem tra thang 
+                    public boolean win(int x, int y, String name) {
+                        int k, j;
+                        int d = 0;
+                        // kt chieu doc
+                        for (k = -4; k <= 4; k++) {
+                            if (x + k >= 0 && x + k < n) {
+                                if (btn[x + k][y].getText() == name) {
+                                    d++;
+                                } else if (d < 5) {
+                                    d = 0;
+                                }
+                            }
+                        }
+                        if (d >= 5) {
+                            return true;
+                        } else {
+                            d = 0;
+                        }
+                        //xet ngang
+                        for (k = -5; k <= 5; k++) {
+                            if (y + k >= 0 && y + k < n) {
+                                if (btn[x][y + k].getText() == name) {
+                                    d++;
+                                } else if (d < 5) {
+                                    d = 0;
+                                }
+                            }
+                        }
+                        if (d >= 5) {
+                            return true;
+                        } else {
+                            d = 0;
+                        }
+                        //cheo
+                        for (k = -4, j = 4; k <= 4 && j >= -4; k++, j--) {
+                            if (y + k >= 0 && y + k < n && x + j >= 0 && x + j < m) {
+                                if (btn[x + j][y + k].getText() == name) {
+                                    d++;
+                                } else if (d < 5) {
+                                    d = 0;
+                                }
+                            }
+                        }
+                        if (d >= 5) {
+                            return true;
+                        } else {
+                            d = 0;
+                        }
+                        for (k = -4; k <= 4; k++) {
+                            if (y + k >= 0 && y + k < n && x + k >= 0 && x + k < m) {
+                                if (btn[x + k][y + k].getText() == name) {
+                                    d++;
+                                } else if (d < 5) {
+                                    d = 0;
+                                }
+                            }
+                        }
+                        if (d >= 5) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
                 //khi con trỏ chuột trỏ vào phần tử tương ứng nào
-
                 plBoardContainer.add(btn[row][column]);
             }
         }
@@ -179,7 +267,6 @@ public final class BoardClient1 extends javax.swing.JFrame {
         if (lastMove != null) {
             lastMove.setBackground(new Color(180, 180, 180));
         }
-
         lastMove = btn[row][column];
         lastMove.setBackground(Color.yellow);
     }
@@ -189,16 +276,9 @@ public final class BoardClient1 extends javax.swing.JFrame {
         b.setFocusPainted(false);
         b.setBackground(new Color(180, 180, 180));
         b.setActionCommand("");
-        // test
-        // addPoint(row, column, "");
         return b;
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -211,10 +291,10 @@ public final class BoardClient1 extends javax.swing.JFrame {
         plPlayer = new javax.swing.JPanel();
         lbAvartar2 = new javax.swing.JLabel();
         lbAvartar1 = new javax.swing.JLabel();
-        lbTen1 = new javax.swing.JLabel();
-        lbTen2 = new javax.swing.JLabel();
-        jProgressBar1 = new javax.swing.JProgressBar();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jbUndo = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -263,75 +343,53 @@ public final class BoardClient1 extends javax.swing.JFrame {
         lbAvartar1.setBackground(new java.awt.Color(255, 153, 153));
         lbAvartar1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 153), 2));
 
-        lbTen1.setText("Bình");
-        lbTen1.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                lbTen1AncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
+        jLabel1.setText("Player1");
 
-        lbTen2.setText("Linh");
-        lbTen2.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                lbTen2AncestorAdded(evt);
-            }
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-
-        jProgressBar1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jProgressBar1.setDebugGraphicsOptions(javax.swing.DebugGraphics.FLASH_OPTION);
-        jProgressBar1.setStringPainted(true);
-
-        jLabel1.setText("Thời gian:");
+        jLabel2.setText("Player2");
 
         javax.swing.GroupLayout plPlayerLayout = new javax.swing.GroupLayout(plPlayer);
         plPlayer.setLayout(plPlayerLayout);
         plPlayerLayout.setHorizontalGroup(
             plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(plPlayerLayout.createSequentialGroup()
-                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plPlayerLayout.createSequentialGroup()
+                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(plPlayerLayout.createSequentialGroup()
                         .addGap(26, 26, 26)
-                        .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(plPlayerLayout.createSequentialGroup()
-                                .addComponent(lbAvartar1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE))
-                            .addGroup(plPlayerLayout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(lbAvartar1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(plPlayerLayout.createSequentialGroup()
-                        .addGap(64, 64, 64)
-                        .addComponent(lbTen1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lbTen2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(36, 36, 36)))
-                .addContainerGap())
+                        .addGap(46, 46, 46)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(plPlayerLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 12, Short.MAX_VALUE))
+                    .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(48, 48, 48))
+            .addGroup(plPlayerLayout.createSequentialGroup()
+                .addGap(57, 57, 57)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(77, 77, 77))
         );
         plPlayerLayout.setVerticalGroup(
             plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(plPlayerLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbAvartar1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addContainerGap(28, Short.MAX_VALUE)
+                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addGap(24, 24, 24)
+                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbAvartar1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                     .addComponent(lbAvartar2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGap(12, 12, 12)
                 .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbTen1)
-                    .addComponent(lbTen2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(plPlayerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jProgressBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addContainerGap())
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(32, 32, 32))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Chức năng", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("sansserif", 1, 16))); // NOI18N
@@ -414,591 +472,30 @@ public final class BoardClient1 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void lbTen1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lbTen1AncestorAdded
-    String data = lbTen1.getText();
-    
-    // Lưu trữ dữ liệu vào biến static
-    tenNguoiChoi1 = data;
-    
-    // Hiển thị// dữ liệu trong JLabel
-    lbTen1.setText(tenNguoiChoi1);
-    }//GEN-LAST:event_lbTen1AncestorAdded
-
-    private void lbTen2AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_lbTen2AncestorAdded
-   String data = lbTen2.getText();
-    
-    // Lưu trữ dữ liệu vào biến static
-    tenNguoiChoi2 = data;
-    
-    // Hiển thị// dữ liệu trong JLabel
-    lbTen2.setText(tenNguoiChoi2);
-    }//GEN-LAST:event_lbTen2AncestorAdded
-    
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(BoardClient1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(BoardClient1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(BoardClient1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(BoardClient1.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new BoardClient1().setVisible(true);
             }
         });
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
     private javax.swing.JButton jbUndo;
     private javax.swing.JLabel koten;
     private javax.swing.JLabel lbAvartar1;
     private javax.swing.JLabel lbAvartar2;
     private javax.swing.JLabel lbPlayer1;
     private javax.swing.JLabel lbPlayer2;
-    private javax.swing.JLabel lbTen1;
-    private javax.swing.JLabel lbTen2;
     private javax.swing.JPanel plBoardContainer;
     private javax.swing.JPanel plPlayer;
     private javax.swing.JPanel plScore;

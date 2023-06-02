@@ -22,13 +22,10 @@ public class graft extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        txttennguoichoi1 = new javax.swing.JTextField();
-        txttennguoichoi2 = new javax.swing.JTextField();
         txtbatdau = new javax.swing.JButton();
         txtid1 = new javax.swing.JPasswordField();
         txtid2 = new javax.swing.JPasswordField();
         jButton2 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
 
@@ -39,14 +36,12 @@ public class graft extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Người Chơi 1");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 60, 95, -1));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 60, 95, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Người Chơi 2");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 60, 88, -1));
-        getContentPane().add(txttennguoichoi1, new org.netbeans.lib.awtextra.AbsoluteConstraints(113, 86, 140, -1));
-        getContentPane().add(txttennguoichoi2, new org.netbeans.lib.awtextra.AbsoluteConstraints(281, 86, 140, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 60, 88, -1));
 
         txtbatdau.setText("Bắt Đầu ");
         txtbatdau.addActionListener(new java.awt.event.ActionListener() {
@@ -54,9 +49,9 @@ public class graft extends javax.swing.JFrame {
                 txtbatdauActionPerformed(evt);
             }
         });
-        getContentPane().add(txtbatdau, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 160, 93, -1));
-        getContentPane().add(txtid1, new org.netbeans.lib.awtextra.AbsoluteConstraints(113, 120, 140, -1));
-        getContentPane().add(txtid2, new org.netbeans.lib.awtextra.AbsoluteConstraints(281, 120, 140, -1));
+        getContentPane().add(txtbatdau, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 140, 93, -1));
+        getContentPane().add(txtid1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 100, 140, -1));
+        getContentPane().add(txtid2, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 140, -1));
 
         jButton2.setText("Thoát");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -64,15 +59,12 @@ public class graft extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 160, 117, -1));
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 140, 117, -1));
 
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("Tên Người Chơi");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(16, 89, 91, -1));
-
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("ID");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 48, -1));
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 100, 30, -1));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/IMG/anhgiangho.jpg"))); // NOI18N
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 240));
@@ -81,16 +73,12 @@ public class graft extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtbatdauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbatdauActionPerformed
-    String tenNguoiChoi1 = txttennguoichoi1.getText();
-    String tenNguoiChoi2 = txttennguoichoi2.getText();
+
     String id1 = String.valueOf(txtid1.getPassword());
     String id2 = String.valueOf(txtid2.getPassword());
 
     // Kiểm tra thông tin người chơi đã nhập đủ hay chưa
-    if (tenNguoiChoi1.isEmpty() || tenNguoiChoi2.isEmpty() || id1.isEmpty() || id2.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin người chơi!");
-        return;
-    }
+ 
     
     // Kiểm tra xem id của người chơi 1 và người chơi 2 có giống nhau hay không
     if (id1.equals(id2)) {
@@ -125,8 +113,7 @@ public class graft extends javax.swing.JFrame {
         // Lưu thông tin người chơi vào biến static trong lớp BoardClient
         BoardClient1.idNguoiChoi1 = Integer.parseInt(id1);
         BoardClient1.idNguoiChoi2 = Integer.parseInt(id2);
-        BoardClient1.tenNguoiChoi1 = tenNguoiChoi1;
-        BoardClient1.tenNguoiChoi2 = tenNguoiChoi2;
+     
 
         // Hiển thị JFrame BoardClient
      BoardClient1 BoardClient1= new  BoardClient1();
@@ -159,14 +146,11 @@ public class graft extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JButton txtbatdau;
     private javax.swing.JPasswordField txtid1;
     private javax.swing.JPasswordField txtid2;
-    private javax.swing.JTextField txttennguoichoi1;
-    private javax.swing.JTextField txttennguoichoi2;
     // End of variables declaration//GEN-END:variables
 
     

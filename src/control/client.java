@@ -5,7 +5,7 @@
 package control;
 import view.Home;
 import view.Login;
-import view.BoardClient;
+
 import view.BoardAI;
 /**
  *
@@ -29,7 +29,7 @@ public class client {
     //giao dien
   
     public static BoardAI boardAI;
-    public static BoardClient boardClient;
+  
     //tao socket
  
     public static void main(String[] args) {
